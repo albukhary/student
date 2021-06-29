@@ -1,10 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
+	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
@@ -17,10 +21,11 @@ type Student struct {
 	Age   int    `db:"age"`
 }
 
+// variable of type pointer to a database
+var db *sqlx.DB
+var err error
+
 func main() {
-	// variable of type pointer to a database
-	var db *sqlx.DB
-	var err error
 
 	//Loading environment variables for DATABASE connection
 	dialect := os.Getenv("DIALECT")
@@ -40,11 +45,71 @@ func main() {
 	}
 
 	// insert into Person query
-	insertStudent := `INSERT INTO student (name, email, age) VALUES ($1, $2, $3);`
+	//	insertStudent := `INSERT INTO student (name, email, age) VALUES ($1, $2, $3);`
 
 	// Insert persons
-	db.MustExec(insertStudent, "Lazizbek", "lazizbek@gmail.com", 21)
-	db.MustExec(insertStudent, "Zafar aka", "zafarAka@novalab.com", 23)
-	db.MustExec(insertStudent, "Izzat aka", "izzatAka@novalab.com", 23)
+	//	db.MustExec(insertStudent, "Lazizbek", "lazizbek@gmail.com", 21)
+	//	db.MustExec(insertStudent, "Zafar aka", "zafarAka@novalab.com", 23)
+	//	db.MustExec(insertStudent, "Izzat aka", "izzatAka@novalab.com", 23)
+
+	// API routes
+	router := mux.NewRouter()
+
+	router.HandleFunc("/students", getStudents).Methods("GET")
+	router.HandleFunc("/student/{id}", getStudent).Methods("GET")
+
+	router.HandleFunc("/create/student", createStudent).Methods("POST")
+
+	//	router.HandleFunc("/delete/student/{id}", deleteStudent).Methods("DELETE")
+
+	log.Fatal(http.ListenAndServe(":8080", router))
+}
+
+// API Controllers
+
+// controller of Persons
+func getStudents(w http.ResponseWriter, r *http.Request) {
+	var students []Student
+
+	err = db.Select(&students, "SELECT * FROM student")
+
+	json.NewEncoder(w).Encode(&students)
+}
+
+// constroller of Person
+func getStudent(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	var student Student
+
+	// find the first match from database
+	//row := db.QueryRow("SELECT  FROM student WHERE id=$1", params["ID"])
+	//	err = row.Scan(&student.ID, &student.Name, &student.Email, &student.Age)
+
+	id, err1 := strconv.Atoi(params["id"])
+	if err1 != nil {
+		log.Fatal(err1)
+	}
+	err = db.Get(&student, "SELECT id, name, email, age FROM student WHERE id=$1", id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	json.NewEncoder(w).Encode(student)
+}
+
+// Postman will send student data as JSON
+// and we will put it into student struct and then into database
+func createStudent(w http.ResponseWriter, r *http.Request) {
+	var student Student
+	json.NewDecoder(r.Body).Decode(&student)
+
+	// insert into Person query
+	insertStudent := `INSERT INTO student (id, name, email, age) VALUES ($1, $2, $3, $4);`
+
+	// Insert the student
+	db.MustExec(insertStudent, student.ID, student.Name, student.Email, student.Age)
+
+	// print the newly added student
+	json.NewEncoder(w).Encode(&student)
 
 }
