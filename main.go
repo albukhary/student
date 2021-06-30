@@ -27,9 +27,8 @@ import (
 // @license.name Novalab Tech
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 // @host localhost:8083
-// @BasePath /
 
-//struct Person for person table in database
+//struct Student represents body of
 type Student struct {
 	ID    int    `db:"id"`
 	Name  string `db:"name"`
