@@ -60,7 +60,7 @@ func main() {
 
 	router.HandleFunc("/create/student", createStudent).Methods("POST")
 
-	//	router.HandleFunc("/delete/student/{id}", deleteStudent).Methods("DELETE")
+	router.HandleFunc("/delete/student/{id}", deleteStudent).Methods("DELETE")
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
@@ -111,5 +111,27 @@ func createStudent(w http.ResponseWriter, r *http.Request) {
 
 	// print the newly added student
 	json.NewEncoder(w).Encode(&student)
+}
 
+func deleteStudent(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	var student Student
+
+	id, err1 := strconv.Atoi(params["id"])
+	if err1 != nil {
+		log.Fatal(err1)
+	}
+	err = db.Get(&student, "SELECT id, name, email, age FROM student WHERE id=$1", id)
+	if err != nil {
+		fmt.Println("There is no student with such ID")
+		log.Fatal(err)
+	}
+
+	deleteQuery := `DELETE FROM student WHERE id=$1`
+
+	//execute deletion
+	db.MustExec(deleteQuery, student.ID)
+
+	json.NewEncoder(w).Encode(&student)
 }
