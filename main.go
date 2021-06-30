@@ -8,7 +8,6 @@ import (
 	"os"
 	"strconv"
 
-	// _ "github.com/albukhary/student/doc"
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
 
@@ -68,14 +67,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// insert into Person query
-	//	insertStudent := `INSERT INTO student (name, email, age) VALUES ($1, $2, $3);`
-
-	// Insert persons
-	//	db.MustExec(insertStudent, "Lazizbek", "lazizbek@gmail.com", 21)
-	//	db.MustExec(insertStudent, "Zafar aka", "zafarAka@novalab.com", 23)
-	//	db.MustExec(insertStudent, "Izzat aka", "izzatAka@novalab.com", 23)
-
 	// API routes
 	router := mux.NewRouter()
 
@@ -93,7 +84,10 @@ func main() {
 
 // API Controllers
 
-// controller of Persons
+// swagger: route GET /students students listStudents
+// Returns a list of students
+// responses :
+// 200: studentsListResponse
 func getStudents(w http.ResponseWriter, r *http.Request) {
 	var students []Student
 
@@ -102,15 +96,16 @@ func getStudents(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&students)
 }
 
+// swagger: route GET /student/{id} student getStudent
+// Finds and returns a particular student with the requested ID
+// responses:
+// 200: studentResponse
+
 // constroller of Person
 func getStudent(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	var student Student
-
-	// find the first match from database
-	//row := db.QueryRow("SELECT  FROM student WHERE id=$1", params["ID"])
-	//	err = row.Scan(&student.ID, &student.Name, &student.Email, &student.Age)
 
 	id, err1 := strconv.Atoi(params["id"])
 	if err1 != nil {
@@ -122,6 +117,14 @@ func getStudent(w http.ResponseWriter, r *http.Request) {
 	}
 	json.NewEncoder(w).Encode(student)
 }
+
+// swagger: route POST /create/student createStudent
+// creates a student of given parameters and writes into the database
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
 
 // Postman will send student data as JSON
 // and we will put it into student struct and then into database
@@ -138,6 +141,13 @@ func createStudent(w http.ResponseWriter, r *http.Request) {
 	// print the newly added student
 	json.NewEncoder(w).Encode(&student)
 }
+
+// swagger: route DELETE /delete/student/{id} delete student deleteStudent
+// Finds and deletes a student with the requested ID
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
 
 func deleteStudent(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
@@ -162,7 +172,14 @@ func deleteStudent(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&student)
 }
 
-// Update
+// swagger: route PUT /student/{id} update student updateStudent
+// Updates the details of the student with the requested ID according to the requested parameters
+// Consumes:
+// - application/json
+// Produces:
+// -application/json
+
+// Update controller
 func updateStudent(w http.ResponseWriter, r *http.Request) {
 	var student Student
 	json.NewDecoder(r.Body).Decode(&student)
@@ -170,9 +187,9 @@ func updateStudent(w http.ResponseWriter, r *http.Request) {
 	// insert into Person query
 	updateStudent := `UPDATE student SET name=$1, email=$2, age=$3;`
 
-	// Insert the student
+	// Insert the student into the database
 	db.MustExec(updateStudent, student.Name, student.Email, student.Age)
 
-	// print the newly added student
+	// print the newly updated student details
 	json.NewEncoder(w).Encode(&student)
 }
