@@ -62,7 +62,9 @@ func main() {
 
 	router.HandleFunc("/delete/student/{id}", deleteStudent).Methods("DELETE")
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	router.HandleFunc("/update/student/{id}", updateStudent).Methods("PUT")
+
+	log.Fatal(http.ListenAndServe(":8081", router))
 }
 
 // API Controllers
@@ -133,5 +135,20 @@ func deleteStudent(w http.ResponseWriter, r *http.Request) {
 	//execute deletion
 	db.MustExec(deleteQuery, student.ID)
 
+	json.NewEncoder(w).Encode(&student)
+}
+
+// Update
+func updateStudent(w http.ResponseWriter, r *http.Request) {
+	var student Student
+	json.NewDecoder(r.Body).Decode(&student)
+
+	// insert into Person query
+	updateStudent := `UPDATE student SET name=$1, email=$2, age=$3;`
+
+	// Insert the student
+	db.MustExec(updateStudent, student.Name, student.Email, student.Age)
+
+	// print the newly added student
 	json.NewEncoder(w).Encode(&student)
 }
