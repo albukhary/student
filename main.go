@@ -8,10 +8,25 @@ import (
 	"os"
 	"strconv"
 
+	_ "github.com/albukhary/student/docs"
+	swagger "github.com/arsmn/fiber-swagger/v2"
+
+	"github.com/gofiber/fiber/v2"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
+
+// @title CRUD student API
+// @version 1.0
+// @description This is a sample swagger for Fiber
+// @termsOfService http://swagger.io/terms/
+// @contact.name API Support
+// @contact.email lazizbekkahramonov@sgmail.com
+// @license.name Noavlab Tech
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @host localhost:8083
+// @BasePath /
 
 //struct Person for person table in database
 type Student struct {
@@ -26,6 +41,10 @@ var db *sqlx.DB
 var err error
 
 func main() {
+
+	app := fiber.New()
+	app.Get("/swagger/*", swagger.Handler)
+	app.Listen(":8083")
 
 	//Loading environment variables for DATABASE connection
 	dialect := os.Getenv("DIALECT")
