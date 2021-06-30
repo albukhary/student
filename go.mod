@@ -3,6 +3,7 @@ module github.com/albukhary/person-book
 go 1.16
 
 require (
+	github.com/albukhary/student/docs v0.0.0-20210630062800-52b003c1e67c
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
 	github.com/andybalholm/brotli v1.0.3 // indirect
 	github.com/arsmn/fiber-swagger/v2 v2.13.0 // indirect

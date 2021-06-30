@@ -8,10 +8,12 @@ import (
 	"os"
 	"strconv"
 
-	_ "github.com/albukhary/student/docs"
+	// _ "github.com/albukhary/student/doc"
 	swagger "github.com/arsmn/fiber-swagger/v2"
-
 	"github.com/gofiber/fiber/v2"
+
+	_ "github.com/albukhary/student/docs"
+
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -23,7 +25,7 @@ import (
 // @termsOfService http://swagger.io/terms/
 // @contact.name API Support
 // @contact.email lazizbekkahramonov@sgmail.com
-// @license.name Noavlab Tech
+// @license.name Novalab Tech
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 // @host localhost:8083
 // @BasePath /
