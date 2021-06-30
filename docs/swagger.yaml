@@ -1,4 +1,15 @@
+basePath: /
+host: localhost:8083
 info:
-  contact: {}
+  contact:
+    email: lazizbekkahramonov@sgmail.com
+    name: API Support
+  description: This is a sample swagger for Fiber
+  license:
+    name: Noavlab Tech
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: CRUD student API
+  version: "1.0"
 paths: {}
 swagger: "2.0"

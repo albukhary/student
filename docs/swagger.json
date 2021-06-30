@@ -1,7 +1,20 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "This is a sample swagger for Fiber",
+        "title": "CRUD student API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "email": "lazizbekkahramonov@sgmail.com"
+        },
+        "license": {
+            "name": "Noavlab Tech",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
     },
+    "host": "localhost:8083",
+    "basePath": "/",
     "paths": {}
 }

@@ -43,7 +43,10 @@ var err error
 func main() {
 
 	app := fiber.New()
-	app.Get("/swagger/*", swagger.Handler)
+	app.Get("/swagger/*", swagger.New(swagger.Config{
+		URL:         "/swagger/doc.json",
+		DeepLinking: false,
+	}))
 	app.Listen(":8083")
 
 	//Loading environment variables for DATABASE connection
